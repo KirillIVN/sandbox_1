@@ -18,10 +18,11 @@ public class GroupHelper extends HelperBase {
         }
     }
 
-//    public boolean isGroupPresent() {
-//        openGroupsPage();
-//        return manager.isElementPresent(By.cssSelector("input[type=\"checkbox\"]"));
-//    }
+    public int getCount() {
+        openGroupsPage();
+        return manager.driver.findElements(By.name("selected[]")).size();
+
+    }
 
     public void createGroup(GroupData group) {
         openGroupsPage();
@@ -31,11 +32,17 @@ public class GroupHelper extends HelperBase {
         returnToGroupsPage();
     }
 
-    public void removeGroup(GroupData group) {
+    public void deleteGroup(GroupData group) {
         openGroupsPage();
         selectGroup(group);
         removeSelectedGroups();
         returnToGroupsPage();
+    }
+
+    public void deleteGroups() {
+        openGroupsPage();
+        selectAllGroups();
+        removeSelectedGroups();
     }
 
     public void modifyGroup(GroupData group, GroupData modifiedGroup) {
@@ -45,6 +52,13 @@ public class GroupHelper extends HelperBase {
         fillGroupForm(modifiedGroup);
         submitGroupModification();
         returnToGroupsPage();
+    }
+
+    private void selectAllGroups() {
+        var checkboxes = manager.driver.findElements(By.name("selected[]"));
+        for (var checkbox : checkboxes) {
+            checkbox.click();
+        }
     }
 
     private void submitGroupCreation() {
@@ -81,25 +95,6 @@ public class GroupHelper extends HelperBase {
         click(By.cssSelector(String.format("input[value='%s']", group.id())));
     }
 
-    public int getCount() {
-        openGroupsPage();
-        return manager.driver.findElements(By.name("selected[]")).size();
-
-    }
-
-    public void deleteGroups() {
-        openGroupsPage();
-        selectAllGroups();
-        removeSelectedGroups();
-    }
-
-    private void selectAllGroups() {
-        var checkboxes = manager.driver.findElements(By.name("selected[]"));
-        for (var checkbox : checkboxes) {
-            checkbox.click();
-        }
-    }
-
     public List<GroupData> getList() {
         openGroupsPage();
         var groups = new ArrayList<GroupData>();
@@ -112,4 +107,9 @@ public class GroupHelper extends HelperBase {
         }
         return groups;
     }
+
+//    public boolean isGroupPresent() {
+//        openGroupsPage();
+//        return manager.isElementPresent(By.cssSelector("input[type=\"checkbox\"]"));
+//    }
 }

@@ -6,8 +6,6 @@ import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.format;
-
 public class ContactHelper extends HelperBase {
 
     public ContactHelper(ApplicationManager manager) {
@@ -42,7 +40,7 @@ public class ContactHelper extends HelperBase {
     public void modifyContact(ContactData contact, ContactData modifiedName) {
         openContactPage();
         selectContact(contact);
-        contactModification();
+        contactModification(contact);
         fillContact(modifiedName);
         submitContact();
         returnToHomePage();
@@ -71,10 +69,12 @@ public class ContactHelper extends HelperBase {
     private void fillContact(ContactData contact) {
         type(By.name("firstname"), contact.name1());
         type(By.name("lastname"), contact.name2());
+        attach(By.name("photo"), contact.photo());
     }
 
-    private void contactModification() {
-        click(By.xpath("//*[@id=\"maintable\"]/tbody/tr[2]/td[8]/a"));
+    private void contactModification(ContactData contact) {
+        var edit = manager.driver.findElement(By.xpath(String.format("//a[@href='edit.php?id=%s']", contact.id())));
+        edit.click();
     }
 
     private void selectContact(ContactData contact) {
@@ -93,7 +93,6 @@ public class ContactHelper extends HelperBase {
             var firstname  = td.get(2).getText();
             contacts.add(new ContactData().withId(id).withFirstName(firstname).withSecondName(lastname));
         }
-
         return contacts;
     }
 
